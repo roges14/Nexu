@@ -1,0 +1,26 @@
+version: "3.8" # specify docker-compose version
+
+# Define the services/containers to be run
+services:
+  database: # name of the third service
+    image: mongo # specify image to build container change to latest
+    container_name: nexuDB
+    command: mongod --port 28018
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=nexuAdmin
+      - MONGO_INITDB_ROOT_PASSWORD=nexuDB2024
+    volumes:
+      - ./mongo:/home/mongodb
+      - ./mongo/init-db.d/:/docker-entrypoint-initdb.d/
+      - ./mongo/db:/data/db
+    ports:
+      - "28018:28018" # specify port forewarding
+
+  nexu: #name of the second service
+    build: nexu # specify the directory of the Dockerfile
+    container_name: nexu
+    restart: always
+    ports:
+      - "3000:3000" #specify ports forewarding
+    links:
+      - database
